@@ -7,13 +7,18 @@ import os
 app = Flask(__name__)
 app.secret_key = "techprepsecret"
 
-# ✅ FIX 1: PostgreSQL use karo, SQLite nahi
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///techprep.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# ✅ FIX 2: db.create_all() bahar rakho - Render pe bhi chalega
+# ✅ User Model PEHLE define karo
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(150), nullable=False)
+
+# ✅ PHIR create_all() chalao
 with app.app_context():
     db.create_all()
 
@@ -26,12 +31,6 @@ def login_required(f):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
-
-# User Model
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(150), nullable=False)
 
 # Routes
 @app.route('/')
@@ -106,4 +105,3 @@ def logout():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
-    
