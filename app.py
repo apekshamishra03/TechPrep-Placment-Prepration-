@@ -58,6 +58,7 @@ def resources():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        print("LOGIN REQUEST RECEIVED")
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
@@ -77,6 +78,7 @@ def login():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
+        print("SIGNUP REQUEST RECEIVED")
         username = request.form['username']
         password = request.form['password']
         
@@ -106,7 +108,7 @@ import os
 
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()
+        db.create_all()   # ✅ table create karega
 
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
